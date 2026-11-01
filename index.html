@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>채팅 야구 2026</title>
+<meta name="theme-color" content="#0a120d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="채팅야구">
+<meta name="description" content="채팅으로 즐기는 야구 게임">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+:root{--bg:#eaf2ea;--card:#fff;--tx:#14221a;--mu:#5b6f61;--bd:#cfe0d3;--btn:#e3f0e6;--btnh:#cfe6d5;--log:#f6faf6;--hl:#c2410c;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1510;--card:#142319;--tx:#e6f1e8;--mu:#93aa99;--bd:#25402e;--btn:#1d3325;--btnh:#27452f;--log:#0f1c14;--hl:#fb923c}}
+:root[data-theme="dark"]{--bg:#0b1510;--card:#142319;--tx:#e6f1e8;--mu:#93aa99;--bd:#25402e;--btn:#1d3325;--btnh:#27452f;--log:#0f1c14;--hl:#fb923c}
+html{overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;line-height:1.5}
+.wrap{max-width:560px;margin:0 auto;padding:12px}
+h1{font-size:20px;font-weight:900;margin:4px 2px 10px}
+.board{background:#0a120d;border:2px solid #24382b;border-radius:10px;padding:10px;color:#ffb020;font-variant-numeric:tabular-nums}
+.sc{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px;text-align:center}
+th,td{padding:3px 5px;min-width:18px}
+th{color:#7a8f80;font-weight:400}
+td.nm{text-align:left;color:#d9e6dc;white-space:nowrap}
+td.r{font-weight:900;font-size:16px;border-left:1px solid #24382b}
+td.cur{background:#26391c}
+.state{display:flex;gap:14px;align-items:center;margin-top:8px}
+svg{width:92px;height:84px;flex:none}
+.bs{--on:#ffb020;flex:1}
+.row{display:flex;align-items:center;gap:8px;font-size:13px;color:#d9e6dc;margin:3px 0}
+.row b{width:14px;color:#ffb020}
+.dot{width:12px;height:12px;border-radius:50%;background:#27382d}
+.dot.on{background:#ffb020}
+.dot.o.on{background:#ef4444}
+.dot.bl.on{background:#4ade80}
+.inn{font-weight:900;font-size:15px;color:#ffb020}
+.who{font-size:13px;color:#d9e6dc}
+#log{height:210px;overflow-y:auto;background:var(--log);border:1px solid var(--bd);border-radius:10px;padding:8px 10px;margin:10px 0;font-size:14px}
+#log p{margin:0 0 5px}
+#log .hl{color:var(--hl);font-weight:700}
+#log .sys{color:var(--mu);font-size:12px}
+#hint{font-weight:700;margin:6px 2px}
+#act{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+button{font:inherit;font-weight:700;color:var(--tx);background:var(--btn);border:1px solid var(--bd);border-radius:10px;padding:12px 8px;cursor:pointer;min-height:48px}
+button:hover{background:var(--btnh)}
+button:focus-visible{outline:3px solid #ffb020;outline-offset:2px}
+button small{display:block;font-weight:400;color:var(--mu);font-size:12px}
+.full{grid-column:1/-1}
+#flip{position:fixed;left:50%;top:38%;font-size:64px;pointer-events:none;z-index:9;text-align:center;font-weight:900;color:#ffb020;text-shadow:0 2px 12px #000;animation:fl 1.4s ease-out forwards}
+@keyframes fl{0%{transform:translate(-50%,0) scale(.4);opacity:0}15%{opacity:1;transform:translate(-50%,-10px) scale(1.2)}100%{transform:translate(-50%,-140px) rotate(540deg) scale(1);opacity:0}}
+@media (prefers-reduced-motion:reduce){#flip{animation:none;opacity:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>⚾ 채팅 야구 2026</h1>
+<div class="board">
+ <div class="sc"><table id="sb"></table></div>
+ <div class="state">
+  <svg viewBox="0 0 92 84" aria-label="주자 상황"><g fill="#27382d" stroke="#3d5645" stroke-width="2">
+   <rect id="b2" x="33" y="6" width="22" height="22" transform="rotate(45 44 17)"/>
+   <rect id="b3" x="6" y="33" width="22" height="22" transform="rotate(45 17 44)"/>
+   <rect id="b1" x="60" y="33" width="22" height="22" transform="rotate(45 71 44)"/></g>
+   <polygon points="44,66 52,72 52,78 36,78 36,72" fill="#d9e6dc"/></svg>
+  <div class="bs">
+   <div class="inn" id="inn"></div>
+   <div class="row"><b>B</b><span id="B"></span></div>
+   <div class="row"><b>S</b><span id="S"></span></div>
+   <div class="row"><b>O</b><span id="O"></span></div>
+   <div class="who" id="who"></div>
+  </div>
+ </div>
+</div>
+<div id="log" aria-live="polite"></div>
+<div id="hint"></div>
+<div id="act"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const R=Math.random, rnd=(a,b)=>Math.floor(a+R()*(b-a+1));
+const TY={four:{n:"포심",a:150,b:160},sl:{n:"슬라이더",a:118,b:122},cu:{n:"커브",a:108,b:112},ch:{n:"체인지업",a:128,b:132}};
+let G;
+
+function init(){
+  G={inn:1,half:0,outs:0,b:0,s:0,bases:[0,0,0],score:[0,0],line:[[],[]],bat:[0,0],last:"",rep:0,over:false,pitch:null};
+  $("log").innerHTML="";
+  log("📣 플레이볼! 원정(나) vs 홈(CPU) · 초 공격은 타자, 말 수비는 투수로 진행합니다.","sys");
+  log("▲ 1회초 원정팀 공격이 시작됩니다.","hl");
+  showActions();
+}
+function log(t,c){const p=document.createElement("p");if(c)p.className=c;p.textContent=t;$("log").appendChild(p);$("log").scrollTop=1e6}
+function dots(id,n,max,cls){$(id).innerHTML=Array.from({length:max},(_,i)=>'<span class="dot '+cls+(i<n?" on":"")+'" style="display:inline-block;margin-right:5px"></span>').join("")}
+
+function render(){
+  const cols=Math.max(9,G.inn);
+  let h="<tr><th></th>"+Array.from({length:cols},(_,i)=>"<th>"+(i+1)+"</th>").join("")+"<th>R</th></tr>";
+  ["원정(나)","홈(CPU)"].forEach((nm,t)=>{
+    h+='<tr><td class="nm">'+nm+"</td>";
+    for(let i=0;i<cols;i++){
+      const v=G.line[t][i],cur=(i+1===G.inn&&t===G.half&&!G.over)?" cur":"";
+      h+='<td class="'+cur+'">'+(v===undefined?"-":v)+"</td>";
+    }
+    h+='<td class="r">'+G.score[t]+"</td></tr>";
+  });
+  $("sb").innerHTML=h;
+  dots("B",G.b,3,"bl");dots("S",G.s,2,"");dots("O",G.outs,2,"o");
+  [1,2,0].forEach((bi,k)=>{});
+  $("b1").setAttribute("fill",G.bases[0]?"#ffb020":"#27382d");
+  $("b2").setAttribute("fill",G.bases[1]?"#ffb020":"#27382d");
+  $("b3").setAttribute("fill",G.bases[2]?"#ffb020":"#27382d");
+  $("inn").textContent=(G.half?"▼ ":"▲ ")+G.inn+"회"+(G.half?"말":"초");
+  $("who").textContent=(G.half?"홈 ":"원정 ")+(G.bat[G.half]+1)+"번 타자"+(G.half?" · 내가 투수":" · 내가 타자");
+}
+
+function btn(label,fn,cls){const b=document.createElement("button");b.innerHTML=label;if(cls)b.className=cls;b.onclick=fn;$("act").appendChild(b)}
+function setActs(){$("act").innerHTML=""}
+
+function cpuPitch(){
+  const r=R();const k=r<.4?"four":r<.65?"sl":r<.8?"cu":"ch";
+  return{k,v:rnd(TY[k].a,TY[k].b),strike:R()<.55};
+}
+function pt(p){return TY[p.k].n+" "+p.v+"km/h"}
+
+function showActions(){
+  render();setActs();
+  if(G.over)return;
+  if(G.half===0){
+    G.pitch=cpuPitch();
+    if(R()<.04)return hbp(true);
+    $("hint").textContent="⚾ 상대 투수가 던집니다! 타격 방법을 고르세요";
+    [["lb","좌번트"],["rb","우번트"],["push","밀어치기"],["pull","당겨치기"],["solid","정타"]].forEach(([k,n])=>btn(n+(k.length>3?"<small>30% 홈런</small>":""),()=>swing(k)));
+    btn("지켜보기<small>볼 · 스트라이크 판정</small>",()=>swing("take"));
+  }else{
+    $("hint").textContent="🔥 던질 구종을 선택하세요";
+    Object.keys(TY).forEach(k=>btn(TY[k].n+"<small>"+TY[k].a+"~"+TY[k].b+"km/h</small>",()=>throwP(k)));
+  }
+}
+
+/* ---- 타자 모드 ---- */
+function swing(c){
+  const p=G.pitch,info="["+pt(p)+"]";
+  if(c==="take")return p.strike?ev("called",info):ev("ball",info);
+  if(c==="lb"||c==="rb"){
+    const side=c==="lb"?"좌측":"우측",r=R();
+    if(r<.12)return ev("bfoul",info+" "+side+" 번트 파울");
+    if(r<.22)return ev("miss",info+" 번트 헛스윙");
+    const run=G.bases.some(x=>x);
+    if(run)return R()<.8?ev("sac",info+" "+side+" 희생번트"):ev("bout",info+" 번트가 뜨면서 잡힙니다");
+    return R()<.3?ev("bhit",info+" "+side+" 기습번트"):ev("bout",info+" "+side+" 번트 아웃");
+  }
+  const dir=c==="push"?"밀어 친":c==="pull"?"당겨 친":"정타로 맞은";
+  if(R()<.3){log(info+" "+dir+" 타구가 쭉쭉 뻗어갑니다!","hl");return ev("hr","");}
+  let r=R()*.7,e;
+  if(!p.strike&&R()<.35)e="miss";
+  else if((r-=.15)<0)e="miss";
+  else if((r-=.12)<0)e="foul";
+  else if((r-=.14)<0)e="go";
+  else if((r-=.12)<0)e="fo";
+  else if((r-=.12)<0)e="1b";
+  else if((r-=.04)<0)e="2b";
+  else e="3b";
+  ev(e,info+" "+dir+" 타구");
+}
+
+/* ---- 투수 모드 ---- */
+function throwP(k){
+  const v=rnd(TY[k].a,TY[k].b),info="["+TY[k].n+" "+v+"km/h]";
+  if(G.last===k)G.rep++;else{G.rep=0;G.last=k}
+  const hb=Math.min(G.rep,3)*.04;
+  if(G.rep>=2)log("⚠ 같은 구종이 계속되면 타자가 노립니다.","sys");
+  if(R()<.04)return hbp(false,info);
+  const strike=R()<.58,r=R();
+  if(!strike){return r<.22?ev("miss",info+" 유인구에 헛스윙"):ev("ball",info)}
+  if(r<.2)return ev("called",info);
+  const miss=.2+(k==="four"?.08:0)-hb;
+  if(r<.2+miss)return ev("miss",info+" 헛스윙");
+  if(r<.2+miss+.17)return ev("foul",info+" 파울 타구");
+  const q=R(),hr=.07+hb/2;let x=q;
+  let e;
+  if((x-=hr)<0)e="hr";else if((x-=.2+hb)<0)e="1b";else if((x-=.06)<0)e="2b";else if((x-=.01)<0)e="3b";else if((x-=.3)<0)e="go";else e="fo";
+  if(e==="hr")log(info+" 상대 타자가 받아칩니다!","hl");
+  ev(e,info+" 상대 타자가 친 타구");
+}
+
+/* ---- 공통 진행 ---- */
+function ev(e,info){
+  if(e==="ball"){G.b++;log(info+" 볼 ("+G.b+"-"+G.s+")");if(G.b>=4){log("🚶 볼넷! 1루로 걸어 나갑니다.","hl");resolve("bb");return finish()}return showActions()}
+  if(e==="miss"||e==="called"||e==="bfoul"){
+    G.s++;
+    log(info+(e==="called"?" 스트라이크! (루킹)":e==="bfoul"?"! 스트라이크":" 스트라이크!")+" ("+G.b+"-"+G.s+")");
+    if(G.s>=3){log("🔥 삼진 아웃!","hl");resolve("so");return finish()}
+    return showActions();
+  }
+  if(e==="foul"){if(G.s<2)G.s++;log(info+" → 파울! ("+G.b+"-"+G.s+")");return showActions()}
+  resolve(e,info);finish();
+}
+
+function addRuns(n){
+  if(!n)return;
+  G.score[G.half]+=n;
+  G.line[G.half][G.inn-1]=(G.line[G.half][G.inn-1]||0)+n;
+  log("🏃 "+n+"점 득점!  "+G.score[0]+" : "+G.score[1],"hl");
+}
+function resolve(e,info){
+  const bs=G.bases;let runs=0;
+  const adv=n=>{
+    for(let i=2;i>=0;i--)if(bs[i]){bs[i]=0;if(i+n>=3)runs++;else bs[i+n]=1}
+    if(n>=4)runs++;else bs[n-1]=1;
+  };
+  const advAll=()=>{if(bs[2]){runs++;bs[2]=0}if(bs[1]){bs[2]=1;bs[1]=0}if(bs[0]){bs[1]=1;bs[0]=0}};
+  const force=()=>{if(bs[0]){if(bs[1]){if(bs[2])runs++;bs[2]=1}bs[1]=1}bs[0]=1};
+  const T={hr:"🎆 홈런!!!",["1b"]:"→ 안타! 1루 출루","2b":"→ 2루타!","3b":"→ 3루타!",go:"→ 땅볼 아웃",fo:"→ 뜬공 아웃",sac:"→ 성공! 주자 진루",bout:"→ 아웃",bhit:"→ 안타! 기습 번트 성공"};
+  if(e==="hr"){const n=1+bs.filter(x=>x).length;adv(4);log("🎆 홈런!!! "+(n>1?n+"점 홈런!":"솔로 홈런!"),"hl");flip()}
+  else if(e==="1b"||e==="bhit")adv(1);
+  else if(e==="2b")adv(2);
+  else if(e==="3b")adv(3);
+  else if(e==="bb"||e==="hbp")force();
+  else if(e==="so"||e==="bout"){G.outs++}
+  else if(e==="go"){
+    if(bs[0]&&G.outs<2&&R()<.45){
+      G.outs+=2;bs[0]=0;log("⚡ 병살타! 더블플레이!","hl");
+      if(G.outs<3){if(bs[2]){runs++;bs[2]=0}if(bs[1]){bs[2]=1;bs[1]=0}}
+    }else{G.outs++;if(G.outs<3)advAll()}
+  }
+  else if(e==="fo"){G.outs++;if(G.outs<3&&bs[2]&&R()<.7){runs++;bs[2]=0;log("🪽 희생플라이!","hl")}}
+  else if(e==="sac"){G.outs++;if(G.outs<3)advAll()}
+  if(info&&e!=="hr")log(info+" "+(T[e]||""));
+  if(G.outs>=3&&!["bb","hbp","hr","1b","2b","3b","bhit"].includes(e))runs=runs;
+  addRuns(runs);
+}
+
+function finish(){
+  render();
+  if(G.half===1&&G.inn>=9&&G.score[1]>G.score[0]){return end("🎉 끝내기! 홈팀(CPU) 승리 "+G.score[0]+":"+G.score[1])}
+  if(G.outs>=3)return endHalf();
+  G.bat[G.half]=(G.bat[G.half]+1)%9;G.b=0;G.s=0;G.rep=G.rep;
+  showActions();
+}
+function endHalf(){
+  G.bases=[0,0,0];G.outs=0;G.b=0;G.s=0;G.bat[G.half]=(G.bat[G.half]+1)%9;
+  if(G.line[G.half][G.inn-1]===undefined)G.line[G.half][G.inn-1]=0;
+  if(G.half===0){
+    if(G.inn>=9&&G.score[1]>G.score[0]){G.line[1][G.inn-1]="X";return end("홈팀이 앞서 "+G.inn+"회말 공격 없이 종료! 홈팀(CPU) 승리 "+G.score[0]+":"+G.score[1])}
+    G.half=1;log("🔁 공수교대! ▼ "+G.inn+"회말, 이제 내가 투수입니다.","hl");
+  }else{
+    if(G.inn>=9&&G.score[0]!==G.score[1])return end(G.score[0]>G.score[1]?"🏆 원정(나) 승리! "+G.score[0]+":"+G.score[1]:"홈팀(CPU) 승리 "+G.score[0]+":"+G.score[1]);
+    if(G.inn>=12)return end("12회 무승부 "+G.score[0]+":"+G.score[1]);
+    G.inn++;G.half=0;log("🔁 공수교대! ▲ "+G.inn+"회초, 내가 타자입니다."+(G.inn>9?" (연장)":""),"hl");
+  }
+  showActions();
+}
+function end(msg){
+  G.over=true;render();setActs();log("⚾ 경기 종료! "+msg,"hl");$("hint").textContent="경기 종료";
+  btn("다시 하기",init,"full");
+}
+
+/* ---- 데드볼 · 벤치클리어링 ---- */
+function hbp(userBats,info){
+  log("💥 "+(userBats?"상대 투수의 공이 내 타자를 맞혔습니다!":(info||"")+" 내 공이 상대 타자를 맞혔습니다!")+" 데드볼!","hl");
+  resolve("hbp");render();setActs();
+  if(userBats){
+    $("hint").textContent="😠 데드볼! 어떻게 할까요?";
+    btn("마운드로 돌진<small>벤치클리어링</small>",()=>{clear(true)});
+    btn("참고 1루로 간다<small>매너 플레이</small>",()=>{log("🤝 타자는 침착하게 1루로 걸어갑니다. 팬들이 박수를 보냅니다.");finish()});
+  }else{
+    $("hint").textContent="🙇 상대 타자가 노려봅니다. 어떻게 할까요?";
+    btn("모자를 벗고 사과<small>상황 종료</small>",()=>{log("🙇 투수가 모자를 벗고 사과하자 타자가 고개를 끄덕이며 1루로 향합니다.");finish()});
+    btn("맞받아 노려본다<small>벤치클리어링</small>",()=>{clear(false)});
+  }
+}
+function clear(userStarts){
+  log("🚨 양 팀 선수들이 모두 그라운드로 뛰쳐나옵니다! 벤치클리어링!!","hl");
+  const r=R();
+  log(r<.35?"🟥 심판진이 중재하고 "+(userStarts?"내 타자":"내 투수")+"에게 퇴장을 선언합니다. 대체 선수가 투입됩니다.":r<.7?"🟨 양 팀 모두 엄중 경고를 받고 경기가 재개됩니다.":"🕊 코치진이 선수들을 말리며 몸싸움 없이 정리됩니다.");
+  finish();
+}
+
+function flip(){
+  const d=document.createElement("div");d.id="flip";d.textContent="🏏 빠던!!";
+  document.body.appendChild(d);setTimeout(()=>d.remove(),1500);
+}
+init();
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{navigator.serviceWorker.register("service-worker.js").catch(()=>{})});
+}
+</script>
+</body>
+</html>
